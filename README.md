@@ -4,7 +4,7 @@
 
 把一个 logo 在一张样图上框一次，自动定位并精准擦除整批图片中的同款 logo。**Mac / Windows** 桌面端。
 
-![hero](docs/preview.png)
+![hero](assets/hero.svg)
 
 ---
 

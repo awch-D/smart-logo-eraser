@@ -1,0 +1,104 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 480" width="1200" height="480">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#fafbff"/>
+      <stop offset="100%" stop-color="#eef1f9"/>
+    </linearGradient>
+    <linearGradient id="brand" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#2f6feb"/>
+      <stop offset="100%" stop-color="#7c4dff"/>
+    </linearGradient>
+    <linearGradient id="card" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="100%" stop-color="#f4f6fb"/>
+    </linearGradient>
+    <filter id="softShadow" x="-10%" y="-10%" width="120%" height="130%">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="6"/>
+      <feOffset dx="0" dy="4"/>
+      <feComponentTransfer><feFuncA type="linear" slope="0.18"/></feComponentTransfer>
+      <feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="3"/>
+    </filter>
+  </defs>
+
+  <rect width="1200" height="480" fill="url(#bg)"/>
+
+  <!-- Title -->
+  <text x="600" y="64" text-anchor="middle" font-family="-apple-system, 'PingFang SC', 'Segoe UI', sans-serif"
+        font-size="28" font-weight="600" fill="#1f2330">Smart Logo Eraser</text>
+  <text x="600" y="92" text-anchor="middle" font-family="-apple-system, 'PingFang SC', 'Segoe UI', sans-serif"
+        font-size="14" fill="#6b7280">OpenCV 定位 · PerSAM-F 像素级分割 · LaMa 修复</text>
+
+  <!-- LEFT: Before card -->
+  <g transform="translate(80,140)" filter="url(#softShadow)">
+    <rect width="320" height="240" rx="14" fill="url(#card)"/>
+    <text x="20" y="32" font-family="-apple-system,sans-serif" font-size="12" fill="#9ca3af">BEFORE</text>
+    <!-- product silhouette -->
+    <rect x="40" y="80" width="240" height="140" rx="10" fill="#dfe5f0"/>
+    <circle cx="160" cy="150" r="44" fill="#cfd6e6"/>
+    <rect x="120" y="190" width="80" height="12" rx="2" fill="#bfc7d8"/>
+    <!-- watermark logo with halo -->
+    <g filter="url(#glow)">
+      <text x="64" y="118" font-family="Impact, 'Helvetica Neue', Arial, sans-serif"
+            font-size="26" font-weight="900" fill="#2f6feb" opacity="0.85">STOCK4U</text>
+    </g>
+    <text x="64" y="118" font-family="Impact, 'Helvetica Neue', Arial, sans-serif"
+          font-size="26" font-weight="900" fill="#1d4fb8">STOCK4U</text>
+  </g>
+
+  <!-- MIDDLE: pipeline arrows + labels -->
+  <g transform="translate(440,180)">
+    <!-- card 1 -->
+    <g>
+      <rect width="160" height="56" rx="8" fill="#ffffff" stroke="#e5e9f2"/>
+      <text x="80" y="24" text-anchor="middle" font-family="-apple-system,sans-serif" font-size="11" fill="#2f6feb" font-weight="600">① OpenCV</text>
+      <text x="80" y="42" text-anchor="middle" font-family="-apple-system,sans-serif" font-size="10" fill="#6b7280">多尺度模板匹配</text>
+    </g>
+    <!-- card 2 -->
+    <g transform="translate(0,72)">
+      <rect width="160" height="56" rx="8" fill="#ffffff" stroke="#e5e9f2"/>
+      <text x="80" y="24" text-anchor="middle" font-family="-apple-system,sans-serif" font-size="11" fill="#7c4dff" font-weight="600">② PerSAM-F</text>
+      <text x="80" y="42" text-anchor="middle" font-family="-apple-system,sans-serif" font-size="10" fill="#6b7280">像素级 mask</text>
+    </g>
+    <!-- card 3 -->
+    <g transform="translate(0,144)">
+      <rect width="160" height="56" rx="8" fill="#ffffff" stroke="#e5e9f2"/>
+      <text x="80" y="24" text-anchor="middle" font-family="-apple-system,sans-serif" font-size="11" fill="#10b981" font-weight="600">③ LaMa / Fill</text>
+      <text x="80" y="42" text-anchor="middle" font-family="-apple-system,sans-serif" font-size="10" fill="#6b7280">修复或覆盖</text>
+    </g>
+  </g>
+
+  <!-- in-arrow -->
+  <g stroke="#9aa4bf" stroke-width="1.5" fill="none">
+    <path d="M 400 260 L 432 260" marker-end="url(#arrow)"/>
+    <path d="M 600 260 L 720 260" marker-end="url(#arrow)"/>
+  </g>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#9aa4bf"/>
+    </marker>
+  </defs>
+
+  <!-- RIGHT: After card -->
+  <g transform="translate(720,140)" filter="url(#softShadow)">
+    <rect width="320" height="240" rx="14" fill="url(#card)"/>
+    <text x="20" y="32" font-family="-apple-system,sans-serif" font-size="12" fill="#10b981" font-weight="600">AFTER ✓</text>
+    <rect x="40" y="80" width="240" height="140" rx="10" fill="#dfe5f0"/>
+    <circle cx="160" cy="150" r="44" fill="#cfd6e6"/>
+    <rect x="120" y="190" width="80" height="12" rx="2" fill="#bfc7d8"/>
+    <!-- subtle "clean" sparkle -->
+    <g fill="#10b981" opacity="0.7">
+      <circle cx="80" cy="100" r="2"/>
+      <circle cx="108" cy="118" r="1.5"/>
+      <circle cx="92" cy="130" r="1"/>
+    </g>
+  </g>
+
+  <!-- bottom badge row -->
+  <g transform="translate(600,430)" text-anchor="middle"
+     font-family="-apple-system,sans-serif" fill="#9ca3af" font-size="11">
+    <text>Apple Silicon MPS · 0.2s 每张图 · 跨平台桌面 · Apache 2.0</text>
+  </g>
+</svg>
