@@ -1,0 +1,37 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+
+# Virtualenv
+.venv/
+venv/
+env/
+
+# OS / IDE
+.DS_Store
+.idea/
+.vscode/
+*.swp
+
+# 应用运行时产生的数据（用户上传 / 处理结果 / 模板库）
+app/uploads/
+app/outputs/
+app/sessions/
+app/templates.json
+
+# 嵌套 git
+app/vendor/personalize_sam/.git/
+
+# 打包产物
+build/
+dist/
+*.egg
+
+# 日志
+*.log

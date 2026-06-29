@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<title>Logo 擦除工具</title>
+<link rel="stylesheet" href="/static/style.css" />
+</head>
+<body>
+<header>
+  <h1>Logo 擦除工具</h1>
+  <div class="steps">
+    <span class="step active" data-step="1">1 框选并保存 logo 到模板库</span>
+    <span class="step" data-step="2">2 选择模板 + 批量擦除</span>
+  </div>
+</header>
+
+<main>
+  <!-- 左侧：Canvas -->
+  <section class="canvas-pane">
+    <div class="canvas-toolbar">
+      <label class="btn">
+        <input type="file" id="tplFile" accept="image/*" hidden />
+        上传样图
+      </label>
+      <div class="tool-group">
+        <button class="tool" data-tool="box" title="框选 logo (B)">▭ 框选</button>
+        <button class="tool" data-tool="pan" title="平移 (空格)">✋ 平移</button>
+        <button class="tool" data-tool="pick" title="吸管取色 (I)">⌖ 吸管</button>
+      </div>
+      <div class="tool-group">
+        <button id="zoomIn" title="放大">＋</button>
+        <button id="zoomOut" title="缩小">－</button>
+        <button id="zoomFit" title="适应">⛶</button>
+        <button id="zoom100" title="100%">1:1</button>
+        <span id="zoomLabel">100%</span>
+      </div>
+    </div>
+    <div class="canvas-wrap">
+      <canvas id="cv"></canvas>
+      <div class="canvas-empty" id="canvasEmpty">
+        点左上「上传样图」选一张图，<br />
+        然后用框选工具圈出需要擦除的 logo，保存到模板库即可
+      </div>
+      <div class="canvas-hud" id="hud"></div>
+    </div>
+  </section>
+
+  <!-- 右侧：控制面板 -->
+  <aside class="side">
+    <div class="card">
+      <h3>① 新建模板</h3>
+      <div class="row"><span>选区：</span><code id="boxInfo">未框选</code></div>
+      <div class="row color-row">
+        <span>取色：</span>
+        <div class="swatch" id="swatch" style="background:#ffffff"></div>
+        <code id="colorInfo">#ffffff (255,255,255)</code>
+        <button class="btn-mini" id="clearColor" title="清除颜色（改用每图自动采样）">×</button>
+      </div>
+      <div class="row">
+        <label>采样半径</label>
+        <input type="range" id="pickRadius" min="1" max="20" value="5" />
+        <code id="pickRadiusLabel">5px</code>
+      </div>
+      <button class="primary block" id="saveTplBtn" disabled>保存到模板库</button>
+      <div class="hint">框选 logo 后保存。颜色非必填，留空则擦除时按每张图周围色自动采样。</div>
+    </div>
+
+    <div class="card">
+      <h3>② 模板库 <span id="tplCount" class="tag">0</span></h3>
+      <div class="tpl-actions">
+        <button class="btn-mini" id="tplSelectAll">全选</button>
+        <button class="btn-mini" id="tplSelectNone">全不选</button>
+        <button class="btn-mini" id="tplRefresh">刷新</button>
+      </div>
+      <div class="tpl-list" id="tplList">
+        <div class="tpl-empty">尚未保存任何模板</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>③ 擦除参数</h3>
+      <div class="sub">绝对像素扩展</div>
+      <div class="row">
+        <label>左右 pad-x</label>
+        <input type="number" id="padX" value="4" min="-50" max="50" />
+      </div>
+      <div class="row">
+        <label>顶部 pad-y</label>
+        <input type="number" id="padY" value="4" min="-50" max="50" />
+      </div>
+      <div class="row">
+        <label>底部 pad-bottom</label>
+        <input type="number" id="padBottom" value="-9" min="-50" max="50" />
+      </div>
+      <div class="sub">按 logo 尺寸自适应（百分比）</div>
+      <div class="row">
+        <label>左右 %</label>
+        <input type="number" id="pctX" value="4" step="1" min="-50" max="50" />
+        <span class="unit">%</span>
+      </div>
+      <div class="row">
+        <label>顶部 %</label>
+        <input type="number" id="pctTop" value="4" step="1" min="-50" max="50" />
+        <span class="unit">%</span>
+      </div>
+      <div class="row">
+        <label>底部 %</label>
+        <input type="number" id="pctBottom" value="12" step="1" min="-50" max="50" />
+        <span class="unit">%</span>
+      </div>
+      <div class="sub">其他</div>
+      <div class="row">
+        <label>匹配阈值 min-score</label>
+        <input type="number" id="minScore" value="0.7" step="0.05" min="0.1" max="1" />
+      </div>
+      <div class="row">
+        <label>填充模式</label>
+        <select id="mode">
+          <option value="fill" selected>fill — 颜色覆盖（快）</option>
+          <option value="iopaint">iopaint — LaMa 修复</option>
+        </select>
+      </div>
+      <div class="hint">百分比按匹配框宽/高计算后与绝对像素叠加。logo 越大膨胀越多，避免大图底部漏一条。</div>
+    </div>
+
+    <div class="card">
+      <h3>④ 批量处理</h3>
+      <label class="btn block">
+        <input type="file" id="batchFiles" accept="image/*" multiple hidden />
+        选择待处理图片 (可多选)
+      </label>
+      <div class="row"><span>已选：</span><code id="batchInfo">0 张</code></div>
+      <button class="primary block" id="runBtn" disabled>开始批量擦除</button>
+      <progress id="prog" value="0" max="1" style="width:100%;display:none"></progress>
+    </div>
+  </aside>
+</main>
+
+<section class="results" id="results"></section>
+
+<div class="lightbox" id="lightbox">
+  <img id="lbImg" />
+  <button id="lbClose">×</button>
+</div>
+
+<script src="/static/app.js"></script>
+</body>
+</html>

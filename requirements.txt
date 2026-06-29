@@ -1,0 +1,20 @@
+# ============ 桌面应用核心依赖 ============
+flask>=3.0
+pywebview>=5.0
+pillow>=10.0
+opencv-python>=4.8
+numpy>=1.24
+
+# ============ PerSAM-F 高精度模式依赖 ============
+# torch / torchvision 在不同平台上需要不同的安装方式：
+#   - Apple Silicon (MPS):  pip install torch torchvision
+#   - Linux/Windows CUDA:   按官方说明选择对应 CUDA 版本
+#   - Linux/Windows CPU:    pip install torch torchvision --index-url https://download.pytorch.org/whl/cpu
+torch>=2.0
+torchvision>=0.15
+timm>=0.9
+einops>=0.7
+
+# ============ IOPaint LaMa 模式 (可选) ============
+# 不需要 LaMa 修复时可省略，应用仍可在颜色填充模式下运行
+iopaint>=1.4
