@@ -8,6 +8,26 @@
 
 ---
 
+## ⏱ 5 秒上手
+
+仓库自带两组合成示例素材（位于 [`examples/`](./examples/)），跑通流程不需要自己找带水印的图：
+
+```bash
+git clone https://github.com/awch-D/smart-logo-eraser.git
+cd smart-logo-eraser
+python3.11 -m venv .venv && source .venv/bin/activate
+pip install -r requirements.txt
+
+# 启动桌面应用
+cd app && python desktop.py
+```
+
+应用打开后，在右侧 ④ 批量处理卡片顶部下拉里选「电商产品图 · STOCK4U」或「风光摄影 · PHOTOMARK」，点 **「试试示例素材」**，再点 **「开始批量擦除」**，结果直接出现在下方网格。
+
+> 如果 `examples/` 是空的（极少数情况下被忽略），可以重新生成：`python scripts/make_examples.py`
+
+---
+
 ## 为什么需要这个工具
 
 电商图、爬虫数据集、文档资料里经常带有产品/视频源站的 logo 水印。
@@ -32,6 +52,8 @@
 - 🎨 **两种擦除模式**：
   - `fill` 颜色覆盖（推荐用于纯色背景，瞬时）
   - `iopaint` LaMa 修复（推荐用于复杂背景，每张 1-3s）
+- 📦 **按需下载高精度模式依赖**：安装包默认不带 torch，避免 1.5GB 的体积负担。首次勾选「高精度模式」时弹窗下载 ~600MB 依赖到 `~/.logo_eraser/runtime/`，结果缓存复用
+- 🧪 **内置示例素材**：仓库自带 [`examples/`](./examples/)（2 组合成图，1 个模板 + 3 张批量图），桌面应用里一键加载即可跑通完整流程
 - 🍎 **Apple Silicon 加速**：通过 MPS 后端跑 MobileSAM，首张 < 1s 加载，后续每张 0.2s
 - 🖥️ **跨平台桌面应用**：Flask + pywebview，单文件可执行，无需用户装 Python
 
@@ -138,7 +160,10 @@ pyinstaller logo_eraser.spec
 - macOS：`dist/Logo Eraser.app`
 - Windows：`dist/Logo Eraser/Logo Eraser.exe`
 
-注意：PerSAM/torch 体积较大，默认 spec 排除了它们。如果要在打包后的应用里启用高精度模式，把 spec 中的 `excludes` 部分去掉即可（最终安装包会增大到约 1.5GB）。
+注意：默认 spec 把 torch / iopaint / timm 都排除在外，最终 lite 安装包体积约 80MB。这是为了让安装包尽可能小，但 PerSAM 高精度模式依赖这些组件。
+应用启动后，用户首次勾选「高精度模式」时，会弹出 runtime 下载弹窗，自动把 ~600MB 的 torch + MobileSAM 权重下载到 `~/.logo_eraser/runtime/`，下次启动直接复用。
+
+如果你想做"all-in-one"版本（一个包就直接能跑高精度模式），把 spec 中的 `excludes` 列表里的 `torch / torchvision / iopaint / timm / einops` 五项去掉即可（最终安装包会增大到约 1.5GB）。
 
 ---
 
@@ -148,12 +173,25 @@ pyinstaller logo_eraser.spec
 smart-logo-eraser/
 ├── LICENSE                       # Apache 2.0
 ├── README.md
+├── ROADMAP.md                    # 产品完善路线图
+├── todos.md                      # 可执行的逐项 todos
 ├── requirements.txt
+├── assets/
+│   └── hero.svg                  # README 顶部示意图
+├── examples/                     # 内置示例素材（合成，可一键加载）
+│   ├── README.md
+│   ├── stock4u/                  # 电商产品图 · STOCK4U
+│   │   ├── meta.json
+│   │   ├── template.png
+│   │   ├── template.box.json
+│   │   └── batch/01.png 02.png 03.png
+│   └── photomark/                # 风光摄影 · © PHOTOMARK
 ├── app/                          # 桌面应用主体
 │   ├── desktop.py                # pywebview 启动入口
 │   ├── server.py                 # Flask backend + API
+│   ├── runtime.py                # 高精度模式 runtime 按需下载（方案 A）
 │   ├── persam_engine.py          # PerSAM-F 引擎封装
-│   ├── logo_eraser.spec          # PyInstaller 打包配置
+│   ├── logo_eraser.spec          # PyInstaller 打包配置（onedir）
 │   ├── static/                   # 前端 CSS/JS
 │   ├── templates/                # HTML 模板
 │   └── vendor/
@@ -161,6 +199,7 @@ smart-logo-eraser/
 │           ├── per_segment_anything/
 │           └── weights/mobile_sam.pt
 └── scripts/
+    ├── make_examples.py          # 合成示例素材的脚本
     └── batch_remove_logo.py      # 独立 CLI 批处理（无 UI）
 ```
 

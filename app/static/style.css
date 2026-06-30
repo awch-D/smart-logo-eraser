@@ -89,3 +89,56 @@ button.primary:disabled { background: #c5cbd6; border-color: #c5cbd6; cursor: no
 .tpl-item:hover .tpl-del { opacity: 1; }
 .tpl-item .tpl-del:hover { background: #ffeaea; border-radius: 3px; }
 .color-row .btn-mini { padding: 2px 6px; }
+
+/* 高精度模式 + 示例素材 */
+.check-row { gap: 10px; }
+.check-row .check { display: flex; align-items: center; gap: 6px; cursor: pointer; font-size: 13px; color: #1f2330; }
+.check-row .check input { margin: 0; cursor: pointer; }
+.badge { font-size: 11px; padding: 1px 8px; border-radius: 10px; background: #fceaea; color: #c0392b; }
+.badge.ready { background: #e3f7e6; color: #2c8a3c; }
+
+.example-row { display: flex; gap: 6px; margin-bottom: 8px; }
+.example-row select { flex: 1; padding: 4px 8px; border: 1px solid #d9dce4; border-radius: 4px; font-size: 13px; background: #fff; }
+
+/* runtime 下载弹窗 */
+.modal { position: fixed; inset: 0; background: rgba(15,20,35,.55); display: flex; align-items: center; justify-content: center; z-index: 200; }
+.modal[hidden] { display: none; }
+.modal-card { width: 520px; max-width: 92vw; background: #fff; border-radius: 10px; box-shadow: 0 20px 50px rgba(0,0,0,.25); overflow: hidden; display: flex; flex-direction: column; }
+.modal-head { padding: 14px 18px; border-bottom: 1px solid #e6e8ee; display: flex; align-items: center; justify-content: space-between; }
+.modal-head h3 { margin: 0; font-size: 15px; color: #1f2330; }
+.modal-close { width: 28px; height: 28px; border: 0; background: transparent; font-size: 18px; cursor: pointer; color: #98a0ad; border-radius: 4px; }
+.modal-close:hover { background: #f0f2f6; color: #1f2330; }
+.modal-body { padding: 16px 18px; }
+.modal-body p { margin: 0 0 12px; font-size: 13px; color: #555; line-height: 1.5; }
+.modal-body code { background: #f4f5f7; padding: 1px 6px; border-radius: 3px; font-size: 12px; }
+.modal-body .rt-row { display: flex; justify-content: space-between; font-size: 12px; color: #98a0ad; margin: 6px 0; font-family: ui-monospace, "SF Mono", monospace; }
+.modal-body #rtProg { width: 100%; height: 8px; }
+.modal-body .rt-log { max-height: 140px; overflow-y: auto; background: #1f2330; color: #d9dce4; font: 11px/1.4 ui-monospace, "SF Mono", monospace; padding: 8px 10px; border-radius: 4px; margin: 8px 0 0; white-space: pre-wrap; }
+.modal-foot { padding: 12px 18px; border-top: 1px solid #e6e8ee; display: flex; justify-content: flex-end; gap: 8px; background: #fafbfd; }
+
+/* 模式 Tab */
+.mode-tabs { display: flex; gap: 2px; padding: 2px; background: #eef0f5; border-radius: 8px; }
+.mode-tab { border: 0; background: transparent; padding: 6px 14px; font-size: 13px; cursor: pointer; border-radius: 6px; color: #555; }
+.mode-tab.active { background: #fff; color: #2f6feb; font-weight: 600; box-shadow: 0 1px 3px rgba(0,0,0,.1); }
+.mode-tab:not(.active):hover { background: #e3e7ef; }
+
+/* 单图模式对比预览 */
+.single-compare { padding: 0 16px 16px; }
+.single-compare h3 { font-size: 13px; margin: 8px 0; }
+.compare-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.compare-col { background: #fff; border: 1px solid #e6e8ee; border-radius: 8px; padding: 8px; }
+.compare-label { font-size: 12px; color: #98a0ad; margin-bottom: 6px; padding-left: 4px; }
+.compare-col img { width: 100%; border-radius: 4px; cursor: zoom-in; display: block; }
+.compare-actions { display: flex; align-items: center; gap: 12px; margin-top: 10px; padding-left: 4px; }
+.compare-actions .btn { padding: 6px 16px; }
+
+/* 手动修复横条 */
+.manual-bar { position: sticky; top: 0; z-index: 50; background: #fff7e6; border-bottom: 1px solid #f0d98a; padding: 8px 16px; display: flex; align-items: center; gap: 10px; font-size: 13px; color: #8a6d3b; }
+.manual-bar[hidden] { display: none; }
+.manual-bar .primary { padding: 4px 12px; }
+
+/* manual-pending 卡片 */
+.result-item.pending { border-color: #f0d98a; background: #fff7e6; }
+.result-item.pending .name { color: #8a6d3b; }
+.result-item.pending .manual-btn { margin-top: 6px; background: #2f6feb; color: #fff; border-color: #2f6feb; }
+.result-item.pending .manual-btn:hover { background: #2557c7; }

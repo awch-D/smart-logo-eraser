@@ -8,9 +8,18 @@
 <body>
 <header>
   <h1>Logo 擦除工具</h1>
-  <div class="steps">
+  <div class="mode-tabs">
+    <button class="mode-tab" data-mode="single">⚡ 单图速擦</button>
+    <button class="mode-tab active" data-mode="batch">📚 批量擦除</button>
+  </div>
+  <div class="steps" id="batchSteps">
     <span class="step active" data-step="1">1 框选并保存 logo 到模板库</span>
     <span class="step" data-step="2">2 选择模板 + 批量擦除</span>
+  </div>
+  <div class="steps" id="singleSteps" hidden>
+    <span class="step active" data-step="1">1 上传图片</span>
+    <span class="step" data-step="2">2 框选 logo</span>
+    <span class="step" data-step="3">3 一键擦除</span>
   </div>
 </header>
 
@@ -47,6 +56,7 @@
 
   <!-- 右侧：控制面板 -->
   <aside class="side">
+    <div class="mode-pane batch-only">
     <div class="card">
       <h3>① 新建模板</h3>
       <div class="row"><span>选区：</span><code id="boxInfo">未框选</code></div>
@@ -120,11 +130,23 @@
           <option value="iopaint">iopaint — LaMa 修复</option>
         </select>
       </div>
-      <div class="hint">百分比按匹配框宽/高计算后与绝对像素叠加。logo 越大膨胀越多，避免大图底部漏一条。</div>
+      <div class="row check-row">
+        <label class="check">
+          <input type="checkbox" id="usePersam" />
+          <span>高精度模式 (PerSAM-F)</span>
+        </label>
+        <span class="badge" id="persamBadge" hidden>未就绪</span>
+      </div>
+      <div class="hint">百分比按匹配框宽/高计算后与绝对像素叠加。logo 越大膨胀越多，避免大图底部漏一条。<br>
+      高精度模式仅对 iopaint 生效，首次启用会按需下载 ~600MB 依赖（仅一次）。</div>
     </div>
 
     <div class="card">
       <h3>④ 批量处理</h3>
+      <div class="example-row" id="exampleRow" hidden>
+        <select id="exampleSel"></select>
+        <button class="btn-mini" id="loadExampleBtn">试试示例素材</button>
+      </div>
       <label class="btn block">
         <input type="file" id="batchFiles" accept="image/*" multiple hidden />
         选择待处理图片 (可多选)
@@ -133,14 +155,100 @@
       <button class="primary block" id="runBtn" disabled>开始批量擦除</button>
       <progress id="prog" value="0" max="1" style="width:100%;display:none"></progress>
     </div>
+    </div><!-- /.batch-only -->
+
+    <div class="mode-pane single-only" hidden>
+      <div class="card">
+        <h3>⚡ 单图速擦</h3>
+        <p class="hint">不需要建模板：上传一张图 → 在左侧 Canvas 上直接框出要擦的 logo → 点擦除即可。适合一次性处理。</p>
+        <label class="btn block">
+          <input type="file" id="singleFile" accept="image/*" hidden />
+          选择图片
+        </label>
+        <div class="row"><span>图片：</span><code id="singleImgInfo">未上传</code></div>
+        <div class="row"><span>选区：</span><code id="singleBoxInfo">未框选</code></div>
+      </div>
+
+      <div class="card">
+        <h3>擦除参数</h3>
+        <div class="row">
+          <label>填充模式</label>
+          <select id="singleMode">
+            <option value="fill" selected>fill — 颜色覆盖（快）</option>
+            <option value="iopaint">iopaint — LaMa 修复</option>
+          </select>
+        </div>
+        <div class="row check-row">
+          <label class="check">
+            <input type="checkbox" id="singleUsePersam" />
+            <span>高精度模式 (PerSAM-F)</span>
+          </label>
+        </div>
+        <div class="row">
+          <label>左右 %</label>
+          <input type="number" id="singlePctX" value="6" step="1" min="-50" max="50" />
+          <span class="unit">%</span>
+        </div>
+        <div class="row">
+          <label>顶部 %</label>
+          <input type="number" id="singlePctTop" value="6" step="1" min="-50" max="50" />
+          <span class="unit">%</span>
+        </div>
+        <div class="row">
+          <label>底部 %</label>
+          <input type="number" id="singlePctBottom" value="6" step="1" min="-50" max="50" />
+          <span class="unit">%</span>
+        </div>
+        <button class="primary block" id="singleRunBtn" disabled>一键擦除</button>
+        <progress id="singleProg" value="0" max="1" style="width:100%;display:none"></progress>
+      </div>
+    </div><!-- /.single-only -->
   </aside>
 </main>
 
 <section class="results" id="results"></section>
 
+<section class="single-compare" id="singleCompare" hidden>
+  <h3>对比预览</h3>
+  <div class="compare-grid">
+    <div class="compare-col">
+      <div class="compare-label">原图</div>
+      <img id="singleBeforeImg" />
+    </div>
+    <div class="compare-col">
+      <div class="compare-label">擦除后</div>
+      <img id="singleAfterImg" />
+    </div>
+  </div>
+  <div class="compare-actions">
+    <a class="btn" id="singleDownload" download>下载结果</a>
+    <span class="hint" id="singleMeta"></span>
+  </div>
+</section>
+
 <div class="lightbox" id="lightbox">
   <img id="lbImg" />
   <button id="lbClose">×</button>
+</div>
+
+<div class="modal" id="runtimeModal" hidden>
+  <div class="modal-card">
+    <div class="modal-head">
+      <h3>启用高精度模式</h3>
+      <button class="modal-close" id="rtClose" title="关闭">×</button>
+    </div>
+    <div class="modal-body">
+      <p id="rtHint">启用高精度模式（PerSAM-F）需要下载 ~600MB 依赖（torch + MobileSAM 权重），全程一次，结果会缓存到 <code>~/.logo_eraser/runtime/</code>。</p>
+      <div class="rt-row"><span id="rtPhase">等待开始</span><span id="rtSpeed"></span></div>
+      <progress id="rtProg" max="100" value="0"></progress>
+      <div class="rt-row"><span id="rtBytes"></span><span id="rtPercent"></span></div>
+      <pre id="rtLog" class="rt-log"></pre>
+    </div>
+    <div class="modal-foot">
+      <button class="btn-mini" id="rtCancel" hidden>取消下载</button>
+      <button class="primary" id="rtStart">开始下载</button>
+    </div>
+  </div>
 </div>
 
 <script src="/static/app.js"></script>
